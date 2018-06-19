@@ -1,11 +1,11 @@
 spring:
   datasource:
-    url: "jdbc:postgresql://localhost:11088/pbdb"
-    username: "pbdb_user"
-    password: "pbdb_pass"
+    url: "jdbc:postgresql://localhost:11088/banzaidb"
+    username: "user"
+    password: "pass"
     driverClassName: "org.postgresql.Driver"
   jpa:
     database-platform: org.hibernate.dialect.PostgreSQLDialect
     hibernate:
-      ddl-auto: update
+      ddl-auto: validate
     show-sql: true

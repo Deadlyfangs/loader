@@ -1,4 +1,4 @@
---Ranks
+--Contents
 CREATE TABLE contents (
   id           BIGINT NOT NULL,
   content      VARCHAR(1024),

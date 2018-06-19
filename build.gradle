@@ -10,6 +10,9 @@ buildscript {
 	}
 }
 
+apply plugin: 'application'
+mainClassName = 'com.banzai.fileloader.Application'
+
 apply plugin: 'java'
 apply plugin: 'eclipse'
 apply plugin: 'org.springframework.boot'
