@@ -1,0 +1,15 @@
+version: '3'
+
+services:
+  postgres:
+    image: postgres:9.6
+    restart: always
+    ports:
+      - 11088:5432
+    volumes:
+      - ./postgres:/var/lib/postgresql/data
+    environment:
+      POSTGRES_DB: banzaidb
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: pass
+

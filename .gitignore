@@ -1,0 +1,8 @@
+#BACKEND
+.DS_Store
+!gradle/wrapper/
+.gradle/
+.idea/
+out/
+build/
+postgres/
