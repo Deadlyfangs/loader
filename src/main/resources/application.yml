@@ -9,3 +9,12 @@ spring:
     hibernate:
       ddl-auto: validate
     show-sql: true
+
+extractor:
+  workerThreads: 4
+  pollingFrequency: 2000
+  directory:
+    source: "~/BanzaiFolder/New"
+    processed: "~/BanzaiFolder/Old"
+    damaged: "~/BanzaiFolder/Damaged"
+
