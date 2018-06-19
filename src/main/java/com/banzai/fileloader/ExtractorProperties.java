@@ -4,7 +4,6 @@ import lombok.Getter;
 import lombok.Setter;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
-import org.springframework.stereotype.Component;
 
 @ConfigurationProperties(prefix = "extractor")
 @Getter
@@ -19,10 +18,10 @@ public class ExtractorProperties {
 
     @Getter
     @Setter
-    private static class Directory {
+    public static class Directory {
         String source;
         String processed;
-        String damaged;
+        String error;
     }
 
 }

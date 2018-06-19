@@ -16,5 +16,5 @@ extractor:
   directory:
     source: "~/BanzaiFolder/New"
     processed: "~/BanzaiFolder/Old"
-    damaged: "~/BanzaiFolder/Damaged"
+    error: "~/BanzaiFolder/Error"
 

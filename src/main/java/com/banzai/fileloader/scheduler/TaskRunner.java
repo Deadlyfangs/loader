@@ -1,5 +1,6 @@
 package com.banzai.fileloader.scheduler;
 
+import com.banzai.fileloader.ExtractorProperties;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -14,9 +15,13 @@ public class TaskRunner {
     @Autowired
     private ExecutorService executorService;
 
+    @Autowired
+    ExtractorProperties extractorProperties;
+
     @Scheduled(fixedRateString = "${extractor.pollingFrequency}")
     private void run() {
-        log.info("Polling for tasks to run");
+        log.info("Polling for tasks to run: {}", extractorProperties.getDirectory().getSource());
+
 
     }
 
