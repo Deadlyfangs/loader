@@ -2,7 +2,7 @@
 CREATE TABLE contents (
   id           BIGINT NOT NULL,
   content      VARCHAR(1024),
-  creationDate TIMESTAMP WITH TIME ZONE
+  creation_date TIMESTAMP WITH TIME ZONE
 );
 
 CREATE SEQUENCE contents_id_seq

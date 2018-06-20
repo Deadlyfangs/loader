@@ -11,7 +11,10 @@ import org.springframework.boot.context.properties.NestedConfigurationProperty;
 public class ExtractorProperties {
 
     int workerThreads;
+    int producers;
+    int queueBound;
     long pollingFrequency;
+
 
     @NestedConfigurationProperty
     Directory directory = new Directory();

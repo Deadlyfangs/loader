@@ -12,9 +12,11 @@ spring:
 
 extractor:
   workerThreads: 4
+  producers: 3
+  queueBound: 10
   pollingFrequency: 2000
   directory:
-    source: "~/BanzaiFolder/New"
-    processed: "~/BanzaiFolder/Old"
-    error: "~/BanzaiFolder/Error"
+    source: "/Users/d.diallo/BanzaiFolder/New"
+    processed: "/Users/d.diallo/BanzaiFolder/Old"
+    error: "/Users/d.diallo/BanzaiFolder/Error"
 
