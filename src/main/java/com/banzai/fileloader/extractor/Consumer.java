@@ -13,13 +13,13 @@ public class Consumer implements Runnable {
 
     @Override
     public void run() {
-//        try {
-//            log.info("Consumer {} sleeps for 3 sec.");
-//            Thread.sleep(3000);
-//            log.info("Consumer {} awakens.");
-//        } catch (InterruptedException e) {
-//            e.printStackTrace();
-//        }
+        try {
+            log.info("Consumer {} sleeps for 3 sec.");
+            Thread.sleep(3000);
+            log.info("Consumer {} awakens.");
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
     }
 
 }
