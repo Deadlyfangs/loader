@@ -6,6 +6,7 @@ import com.banzai.fileloader.repository.ContentRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
+import java.io.File;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.TimeUnit;
 
@@ -13,7 +14,7 @@ import java.util.concurrent.TimeUnit;
 @RequiredArgsConstructor
 public class ConsumerTwo implements Runnable {
 
-    private final BlockingQueue<String> queue;
+    private final BlockingQueue<File> queue;
     private final ContentRepository contentRepository;
 
     @Override
@@ -23,15 +24,15 @@ public class ConsumerTwo implements Runnable {
     }
 
     private void fetchQueue() {
-        String content = takeFromQueue();
+        File content = takeFromQueue();
 
         if(isValid(content)) {
             save(parse(content));
         }
     }
 
-    private String takeFromQueue() {
-        String content = null;
+    private File takeFromQueue() {
+        File content = null;
         try {
             content = queue.poll(100, TimeUnit.MILLISECONDS);
         } catch (InterruptedException e) {
@@ -40,11 +41,11 @@ public class ConsumerTwo implements Runnable {
         return content;
     }
 
-    private boolean isValid(String content) {
+    private boolean isValid(File content) {
         return true;
     }
 
-    private ContentEntity parse(String content) {
+    private ContentEntity parse(File content) {
         return new ContentEntity();
     }
 
