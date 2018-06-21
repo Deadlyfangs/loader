@@ -20,10 +20,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.*;
-import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.ConcurrentLinkedDeque;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.LinkedBlockingDeque;
+import java.util.concurrent.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -40,9 +37,9 @@ public class TaskRunnerTwo {
     private int producers;
     private int consumers;
     private BlockingQueue<String> queue;
-    private Queue<String> waitList;
-    private List<String> scannedList;
-    private volatile State state;
+    private Queue<String> waitList = new ConcurrentLinkedQueue<>();
+    private List<String> scannedList = new ArrayList<>(10000);
+    private volatile State state = State.FREE;
 
     @PostConstruct
     private void init() {
@@ -50,25 +47,24 @@ public class TaskRunnerTwo {
         producers = extractorProperties.getProducers();
         consumers = Runtime.getRuntime().availableProcessors();
         queue = new LinkedBlockingDeque<>(extractorProperties.getQueueBound());
-        waitList = new ConcurrentLinkedDeque<>();
-        scannedList = new ArrayList<>(10000);
-        state = State.FREE;
     }
 
     @Scheduled(fixedRateString = "${extractor.pollingFrequency}")
     private void run() {
         log.info("Polling for tasks to run. Source directory: {}", source);
+        log.info("State: {}", state);
 
         if(state.equals(State.FREE)) {
             state = State.BUSY;
+
             process();
 
             for(int i = 0; i < producers; i++) {
-                executorService.execute(new ProducerTwo(queue, waitList));
+                executorService.submit(new ProducerTwo(queue, waitList));
             }
 
             for (int i = 0; i < consumers; i++) {
-                executorService.execute(new ConsumerTwo(queue, contentRepository));
+                executorService.submit(new ConsumerTwo(queue, contentRepository));
             }
             state = State.FREE;
         }

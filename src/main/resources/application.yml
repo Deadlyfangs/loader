@@ -11,10 +11,10 @@ spring:
     show-sql: true
 
 extractor:
-  workerThreads: 8
-  producers: 4
+  workerThreads: 4
+  producers: 2
   queueBound: 10
-  pollingFrequency: 2000
+  pollingFrequency: 500
   directory:
     source: "/Users/d.diallo/BanzaiFolder/New"
     processed: "/Users/d.diallo/BanzaiFolder/Old"

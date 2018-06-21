@@ -7,6 +7,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.TimeUnit;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -19,7 +20,6 @@ public class ConsumerTwo implements Runnable {
     public void run() {
         log.info("Consumer started fetching waitlist...");
         fetchQueue();
-        log.info("Consumer finished fetching waitlist...");
     }
 
     private void fetchQueue() {
@@ -33,7 +33,7 @@ public class ConsumerTwo implements Runnable {
     private String takeFromQueue() {
         String content = null;
         try {
-            content = queue.take();
+            content = queue.poll(100, TimeUnit.MILLISECONDS);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
