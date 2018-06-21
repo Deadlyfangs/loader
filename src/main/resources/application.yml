@@ -11,8 +11,8 @@ spring:
     show-sql: true
 
 extractor:
-  workerThreads: 4
-  producers: 3
+  workerThreads: 8
+  producers: 4
   queueBound: 10
   pollingFrequency: 2000
   directory:
