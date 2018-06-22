@@ -1,21 +1,19 @@
 package com.banzai.fileloader.scheduler;
 
 
-import com.banzai.fileloader.ExtractorProperties;
-import com.banzai.fileloader.extractor.ConsumerTwo;
-import com.banzai.fileloader.extractor.ProducerTwo;
-import com.banzai.fileloader.processor.JaxbContextLoader;
-import com.banzai.fileloader.processor.XmlProcessor;
+import com.banzai.fileloader.SchedulerProperties;
+import com.banzai.fileloader.extractor.Consumer;
+import com.banzai.fileloader.extractor.Producer;
+import com.banzai.fileloader.parser.JaxbContextLoader;
+import com.banzai.fileloader.parser.XmlProcessor;
 import com.banzai.fileloader.repository.ContentRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Profile;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
-import org.xml.sax.SAXException;
 
 import javax.annotation.PostConstruct;
-import javax.xml.bind.JAXBException;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -38,7 +36,7 @@ import java.util.stream.Stream;
 @RequiredArgsConstructor
 public class TaskRunnerTwo {
 
-    private final ExtractorProperties extractorProperties;
+    private final SchedulerProperties extractorProperties;
     private final ExecutorService executorService;
     private final ContentRepository contentRepository;
     private final JaxbContextLoader jaxbContextLoader;
@@ -60,7 +58,7 @@ public class TaskRunnerTwo {
         queue = new LinkedBlockingDeque<>(extractorProperties.getQueueBound());
     }
 
-    @Scheduled(fixedRateString = "${extractor.pollingFrequency}")
+    @Scheduled(fixedRateString = "${scheduler.pollingFrequency}")
     private void run() {
         log.info("Polling for tasks to run. Source directory: {}", source);
 
@@ -70,10 +68,10 @@ public class TaskRunnerTwo {
             process();
 
             for(int i = 0; i < producers; i++) {
-                executorService.submit(new ProducerTwo(queue, waitList));
+                executorService.submit(new Producer(queue, waitList));
             }
             for (int i = 0; i < consumers; i++) {
-                executorService.submit(new ConsumerTwo(queue, contentRepository,
+                executorService.submit(new Consumer(queue, contentRepository,
                         new XmlProcessor(jaxbContextLoader.getJaxbContext(), jaxbContextLoader.getSchema())));
             }
             state = State.FREE;

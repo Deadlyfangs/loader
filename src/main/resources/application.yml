@@ -10,7 +10,7 @@ spring:
       ddl-auto: validate
     show-sql: true
 
-extractor:
+scheduler:
   workerThreads: 4
   producers: 2
   queueBound: 10

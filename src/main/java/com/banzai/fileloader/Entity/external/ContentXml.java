@@ -1,7 +1,7 @@
 package com.banzai.fileloader.Entity.external;
 
 
-import com.banzai.fileloader.processor.LocalDateAdapter;
+import com.banzai.fileloader.parser.LocalDateAdapter;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;

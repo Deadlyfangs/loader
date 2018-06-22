@@ -3,7 +3,7 @@ package com.banzai.fileloader.extractor;
 
 import com.banzai.fileloader.Entity.external.ContentXml;
 import com.banzai.fileloader.Entity.internal.ContentEntity;
-import com.banzai.fileloader.processor.XmlProcessor;
+import com.banzai.fileloader.parser.XmlProcessor;
 import com.banzai.fileloader.repository.ContentRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -15,7 +15,7 @@ import java.util.concurrent.TimeUnit;
 
 @Slf4j
 @RequiredArgsConstructor
-public class ConsumerTwo implements Runnable {
+public class Consumer implements Runnable {
 
     private final BlockingQueue<File> queue;
     private final ContentRepository contentRepository;
@@ -23,7 +23,7 @@ public class ConsumerTwo implements Runnable {
 
     @Override
     public void run() {
-        log.info("Consumer started fetching waitlist...");
+        log.info("Consumer started fetching blocking queue...");
 
         File newFile = fetchQueue();
         try {

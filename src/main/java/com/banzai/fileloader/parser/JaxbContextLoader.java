@@ -1,4 +1,4 @@
-package com.banzai.fileloader.processor;
+package com.banzai.fileloader.parser;
 
 
 import com.banzai.fileloader.Entity.external.ContentXml;

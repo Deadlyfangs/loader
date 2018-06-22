@@ -1,4 +1,4 @@
-package com.banzai.fileloader.processor;
+package com.banzai.fileloader.parser;
 
 import javax.xml.bind.annotation.adapters.XmlAdapter;
 import java.time.LocalDateTime;

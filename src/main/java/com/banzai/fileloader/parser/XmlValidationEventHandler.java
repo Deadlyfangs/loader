@@ -1,4 +1,4 @@
-package com.banzai.fileloader.processor;
+package com.banzai.fileloader.parser;
 
 import lombok.extern.slf4j.Slf4j;
 
