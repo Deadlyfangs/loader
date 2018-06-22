@@ -65,7 +65,6 @@ public class TaskRunnerTwo {
             for(int i = 0; i < producers; i++) {
                 executorService.submit(new ProducerTwo(queue, waitList));
             }
-
             for (int i = 0; i < consumers; i++) {
                 executorService.submit(new ConsumerTwo(queue, contentRepository));
             }

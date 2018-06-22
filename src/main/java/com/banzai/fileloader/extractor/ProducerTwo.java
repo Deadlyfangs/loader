@@ -30,7 +30,7 @@ public class ProducerTwo implements Runnable {
     }
 
     private void fetchWaitList() {
-        while(!waitList.isEmpty()) {
+        while (!waitList.isEmpty()) {
             String filePath = waitList.poll();
             log.info("FilePath: {}", filePath);
             putIntoQueue(getContent(filePath));

@@ -26,7 +26,7 @@ public class ConsumerTwo implements Runnable {
     private void fetchQueue() {
         File content = takeFromQueue();
 
-        if(isValid(content)) {
+        if (isValid(content)) {
             save(parse(content));
         }
     }

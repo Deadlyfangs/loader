@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
+
+    <xs:element name="Entry">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="content" type="stringMaxSize1024"/>
+                <xs:element name="creationDate" maxOccurs="1"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:simpleType name="stringMaxSize1024">
+        <xs:restriction base="xs:string">
+            <xs:maxLength value="1024"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+</xs:schema>
