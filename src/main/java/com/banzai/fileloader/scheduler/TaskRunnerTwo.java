@@ -1,16 +1,25 @@
 package com.banzai.fileloader.scheduler;
 
 
+import com.banzai.fileloader.Entity.external.ContentXml;
 import com.banzai.fileloader.ExtractorProperties;
 import com.banzai.fileloader.extractor.ConsumerTwo;
 import com.banzai.fileloader.extractor.ProducerTwo;
+import com.banzai.fileloader.processor.XmlProcessor;
 import com.banzai.fileloader.repository.ContentRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.annotation.Profile;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
+import org.xml.sax.SAXException;
 
 import javax.annotation.PostConstruct;
+import javax.xml.XMLConstants;
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBException;
+import javax.xml.validation.Schema;
+import javax.xml.validation.SchemaFactory;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -27,6 +36,7 @@ import java.util.concurrent.LinkedBlockingDeque;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+@Profile("!test")
 @Service
 @Slf4j
 @RequiredArgsConstructor
@@ -44,12 +54,19 @@ public class TaskRunnerTwo {
     private List<String> scannedList = new ArrayList<>(10000);
     private volatile State state = State.FREE;
 
+    private JAXBContext jaxbContext;
+    private Schema schema;
+
     @PostConstruct
-    private void init() {
+    private void init() throws JAXBException, SAXException {
         source = extractorProperties.getDirectory().getSource();
         producers = extractorProperties.getProducers();
         consumers = Runtime.getRuntime().availableProcessors();
         queue = new LinkedBlockingDeque<>(extractorProperties.getQueueBound());
+
+        jaxbContext = JAXBContext.newInstance(ContentXml.class);
+        schema = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI).
+                newSchema(getClass().getClassLoader().getResource("xml/content_schema.xsd"));
     }
 
     @Scheduled(fixedRateString = "${extractor.pollingFrequency}")
@@ -66,7 +83,7 @@ public class TaskRunnerTwo {
                 executorService.submit(new ProducerTwo(queue, waitList));
             }
             for (int i = 0; i < consumers; i++) {
-                executorService.submit(new ConsumerTwo(queue, contentRepository));
+                executorService.submit(new ConsumerTwo(queue, contentRepository, new XmlProcessor(jaxbContext, schema)));
             }
             state = State.FREE;
         }

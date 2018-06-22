@@ -1,35 +1,26 @@
 package com.banzai.fileloader.Entity.external;
 
 
+import com.banzai.fileloader.processor.LocalDateAdapter;
+
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import java.time.LocalDateTime;
 
 
 @XmlRootElement(name = "Entry")
+@XmlAccessorType(XmlAccessType.FIELD)
 public class ContentXml {
-
-    private long id;
+    @XmlElement
     private String content;
+
+    @XmlJavaTypeAdapter(value = LocalDateAdapter.class)
     private LocalDateTime creationDate;
 
     public ContentXml() {
-    }
-
-    public ContentXml(long id, String content, LocalDateTime creationDate) {
-        this.id = id;
-        this.content = content;
-        this.creationDate = creationDate;
-    }
-
-    @XmlElement
-    public void setContent(String content) {
-        this.content = content;
-    }
-
-    @XmlElement
-    public void setCreationDate(LocalDateTime creationDate) {
-        this.creationDate = creationDate;
     }
 
     public String getContent() {
@@ -38,6 +29,14 @@ public class ContentXml {
 
     public LocalDateTime getCreationDate() {
         return creationDate;
+    }
+
+    public void setContent(String content) {
+        this.content = content;
+    }
+
+    public void setCreationDate(LocalDateTime creationDate) {
+        this.creationDate = creationDate;
     }
 
 }
