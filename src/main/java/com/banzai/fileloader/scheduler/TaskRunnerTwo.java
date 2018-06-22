@@ -1,10 +1,10 @@
 package com.banzai.fileloader.scheduler;
 
 
-import com.banzai.fileloader.Entity.external.ContentXml;
 import com.banzai.fileloader.ExtractorProperties;
 import com.banzai.fileloader.extractor.ConsumerTwo;
 import com.banzai.fileloader.extractor.ProducerTwo;
+import com.banzai.fileloader.processor.JaxbContextLoader;
 import com.banzai.fileloader.processor.XmlProcessor;
 import com.banzai.fileloader.repository.ContentRepository;
 import lombok.RequiredArgsConstructor;
@@ -15,11 +15,7 @@ import org.springframework.stereotype.Service;
 import org.xml.sax.SAXException;
 
 import javax.annotation.PostConstruct;
-import javax.xml.XMLConstants;
-import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
-import javax.xml.validation.Schema;
-import javax.xml.validation.SchemaFactory;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -45,6 +41,7 @@ public class TaskRunnerTwo {
     private final ExtractorProperties extractorProperties;
     private final ExecutorService executorService;
     private final ContentRepository contentRepository;
+    private final JaxbContextLoader jaxbContextLoader;
 
     private String source;
     private int producers;
@@ -54,25 +51,18 @@ public class TaskRunnerTwo {
     private List<String> scannedList = new ArrayList<>(10000);
     private volatile State state = State.FREE;
 
-    private JAXBContext jaxbContext;
-    private Schema schema;
 
     @PostConstruct
-    private void init() throws JAXBException, SAXException {
+    private void init() {
         source = extractorProperties.getDirectory().getSource();
         producers = extractorProperties.getProducers();
         consumers = Runtime.getRuntime().availableProcessors();
         queue = new LinkedBlockingDeque<>(extractorProperties.getQueueBound());
-
-        jaxbContext = JAXBContext.newInstance(ContentXml.class);
-        schema = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI).
-                newSchema(getClass().getClassLoader().getResource("xml/content_schema.xsd"));
     }
 
     @Scheduled(fixedRateString = "${extractor.pollingFrequency}")
     private void run() {
         log.info("Polling for tasks to run. Source directory: {}", source);
-        log.info("State: {}", state);
 
         if(state.equals(State.FREE)) {
             state = State.BUSY;
@@ -83,7 +73,8 @@ public class TaskRunnerTwo {
                 executorService.submit(new ProducerTwo(queue, waitList));
             }
             for (int i = 0; i < consumers; i++) {
-                executorService.submit(new ConsumerTwo(queue, contentRepository, new XmlProcessor(jaxbContext, schema)));
+                executorService.submit(new ConsumerTwo(queue, contentRepository,
+                        new XmlProcessor(jaxbContextLoader.getJaxbContext(), jaxbContextLoader.getSchema())));
             }
             state = State.FREE;
         }
