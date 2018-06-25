@@ -18,15 +18,11 @@ import org.springframework.stereotype.Service;
 import javax.annotation.PostConstruct;
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.FileAlreadyExistsException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
+import java.nio.file.*;
 import java.util.*;
-import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.ConcurrentLinkedQueue;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.LinkedBlockingDeque;
+import java.util.concurrent.*;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -44,7 +40,8 @@ public class TaskRunner {
     private BlockingQueue<File> queue;
     private Queue<String> waitList = new ConcurrentLinkedQueue<>();
     private List<String> scannedList = new ArrayList<>(10000);
-    private volatile State state = State.FREE;
+
+    private Lock lock = new ReentrantLock();
 
     @PostConstruct
     private void init() {
@@ -55,19 +52,16 @@ public class TaskRunner {
     @Scheduled(fixedRateString = "${scheduler.pollingFrequency}")
     private void run() {
         log.info("Polling for tasks to run. Source directory: {}", getSourceDir());
-        if(state.equals(State.FREE)) {
-            state = State.BUSY;
 
-            process();
-
-            for(int i = 0; i < getProducerCount(); i++) {
-                executorService.submit(createProducer());
+        if (lock.tryLock()) {
+            try {
+                process();
+            } catch (Throwable t) {
+                log.error(t.getMessage());
+                t.printStackTrace();
+            } finally {
+                lock.unlock();
             }
-            for (int i = 0; i < getConsumerCount(); i++) {
-                executorService.submit(createConsumer());
-            }
-
-            state = State.FREE;
         }
     }
 
@@ -79,20 +73,28 @@ public class TaskRunner {
                         waitList.offer(s);
                     }
                 });
+
+        for(int i = 0; i < getProducerCount(); i++) {
+            executorService.submit(createProducer());
+        }
+        for (int i = 0; i < getConsumerCount(); i++) {
+            executorService.submit(createConsumer());
+        }
     }
 
     private List<String> scanDirectory() {
         List<String> filePathList = Collections.emptyList();
-        String fileDirectory = getSourceDir();
 
-        try (Stream<Path> paths = Files.walk(Paths.get(fileDirectory))) {
+        try (Stream<Path> paths = Files.walk(Paths.get(getSourceDir()))) {
             filePathList = paths
                     .filter(Files::isRegularFile)
                     .filter(f -> f.toString().endsWith(".xml"))
                     .map(Path::toString)
                     .collect(Collectors.toList());
+        } catch (NoSuchFileException ne) {
+            log.warn(ne.getMessage());
         } catch (IOException e) {
-            e.printStackTrace();
+            log.error(e.getMessage());
         }
 
         return filePathList;

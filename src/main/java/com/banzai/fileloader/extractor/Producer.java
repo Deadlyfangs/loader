@@ -19,20 +19,13 @@ public class Producer implements Runnable {
     @Override
     public void run() {
         log.info("Producer started fetching waitlist...");
-        fetchWaitList();
+
+        File file = getContent(fetchWaitList());
+        putIntoQueue(file);
     }
 
-//    private void fetchWaitList() {
-//        while (!waitList.isEmpty()) {
-//            String filePath = waitList.poll();
-//            log.debug("FilePath: {}", filePath);
-//            putIntoQueue(getContent(filePath));
-//        }
-//    }
-
-    private void fetchWaitList() {
-        String filePath = waitList.poll();
-        putIntoQueue(getContent(filePath));
+    private String fetchWaitList() {
+        return waitList.poll();
     }
 
     private File getContent(String filePath) {
