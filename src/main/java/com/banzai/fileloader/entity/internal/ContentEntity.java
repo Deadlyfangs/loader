@@ -1,4 +1,4 @@
-package com.banzai.fileloader.Entity.internal;
+package com.banzai.fileloader.entity.internal;
 
 
 import lombok.Getter;

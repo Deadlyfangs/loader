@@ -1,4 +1,4 @@
-package com.banzai.fileloader.Entity.external;
+package com.banzai.fileloader.entity.external;
 
 
 import com.banzai.fileloader.parser.LocalDateAdapter;

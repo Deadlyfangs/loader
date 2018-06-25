@@ -1,6 +1,7 @@
 package com.banzai.fileloader.parser;
 
 
+import com.banzai.fileloader.entity.external.ContentXml;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -30,10 +31,15 @@ public class XmlProcessorTest {
         XmlProcessor xmlProcessor = new XmlProcessor(jaxbContextLoader.getJaxbContext(), jaxbContextLoader.getSchema());
 
         try {
-            xmlProcessor.unmarshal(new File("/Users/d.diallo/BanzaiFolder/New/test.xml"));
+            ContentXml content = xmlProcessor.unmarshal(new File("/Users/d.diallo/BanzaiFolder/New/test.xml"));
+
+            File file = xmlProcessor.marshal(content);
+
+            log.debug("Done");
         } catch (JAXBException e) {
             e.printStackTrace();
         }
     }
+
 
 }

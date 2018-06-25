@@ -3,6 +3,7 @@ package com.banzai.fileloader.parser;
 import javax.xml.bind.annotation.adapters.XmlAdapter;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.Locale;
 
 public class LocalDateAdapter extends XmlAdapter<String, LocalDateTime> {
 
@@ -13,6 +14,6 @@ public class LocalDateAdapter extends XmlAdapter<String, LocalDateTime> {
 
     @Override
     public String marshal(LocalDateTime v) throws Exception {
-        return null;
+        return v.format(DateTimeFormatter.ofPattern("uuuu-MM-dd HH:mm:ss"));
     }
 }

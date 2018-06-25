@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
 import javax.annotation.PostConstruct;
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.FileAlreadyExistsException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -56,6 +57,8 @@ public class TaskRunnerTwo {
         producers = extractorProperties.getProducers();
         consumers = Runtime.getRuntime().availableProcessors();
         queue = new LinkedBlockingDeque<>(extractorProperties.getQueueBound());
+
+        createDirectories();
     }
 
     @Scheduled(fixedRateString = "${scheduler.pollingFrequency}")
@@ -79,6 +82,16 @@ public class TaskRunnerTwo {
 
     }
 
+    private void process() {
+        scanDirectory().stream()
+                .forEach(s -> {
+                    if (!scannedList.contains(s)) {
+                        scannedList.add(s);
+                        waitList.offer(s);
+                    }
+                });
+    }
+
     private List<String> scanDirectory() {
         List<String> filePathList = Collections.emptyList();
         String fileDirectory = String.valueOf(source);
@@ -96,14 +109,19 @@ public class TaskRunnerTwo {
         return filePathList;
     }
 
-    private void process() {
-        scanDirectory().stream()
-                .forEach(s -> {
-                    if (!scannedList.contains(s)) {
-                        scannedList.add(s);
-                        waitList.offer(s);
-                    }
-                });
+    private void createDirectories() {
+        Path sourceDir = Paths.get(source);
+        Path processedDir = Paths.get(source + "/processed");
+        Path errorDir = Paths.get(source + "/error");
+
+        try {
+            Files.createDirectory(processedDir);
+            Files.createDirectory(errorDir);
+        } catch (FileAlreadyExistsException e) {
+            log.info("Folder wuth name: {} already exists.", e.getMessage());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
 }

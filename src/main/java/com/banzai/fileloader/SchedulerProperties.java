@@ -23,8 +23,6 @@ public class SchedulerProperties {
     @Setter
     public static class Directory {
         String source;
-        String processed;
-        String error;
     }
 
 }

@@ -1,6 +1,6 @@
 package com.banzai.fileloader.parser;
 
-import com.banzai.fileloader.Entity.external.ContentXml;
+import com.banzai.fileloader.entity.external.ContentXml;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
