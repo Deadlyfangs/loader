@@ -3,6 +3,8 @@ package com.banzai.fileloader.scheduler;
 
 import com.banzai.fileloader.SchedulerProperties;
 import com.banzai.fileloader.extractor.Consumer;
+import com.banzai.fileloader.extractor.Folder;
+import com.banzai.fileloader.extractor.FolderType;
 import com.banzai.fileloader.extractor.Producer;
 import com.banzai.fileloader.parser.JaxbContextLoader;
 import com.banzai.fileloader.parser.XmlProcessor;
@@ -20,10 +22,7 @@ import java.nio.file.FileAlreadyExistsException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Queue;
+import java.util.*;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.ExecutorService;
@@ -35,51 +34,41 @@ import java.util.stream.Stream;
 @Service
 @Slf4j
 @RequiredArgsConstructor
-public class TaskRunnerTwo {
+public class TaskRunner {
 
     private final SchedulerProperties extractorProperties;
     private final ExecutorService executorService;
     private final ContentRepository contentRepository;
     private final JaxbContextLoader jaxbContextLoader;
 
-    private String source;
-    private int producers;
-    private int consumers;
     private BlockingQueue<File> queue;
     private Queue<String> waitList = new ConcurrentLinkedQueue<>();
     private List<String> scannedList = new ArrayList<>(10000);
     private volatile State state = State.FREE;
 
-
     @PostConstruct
     private void init() {
-        source = extractorProperties.getDirectory().getSource();
-        producers = extractorProperties.getProducers();
-        consumers = Runtime.getRuntime().availableProcessors();
-        queue = new LinkedBlockingDeque<>(extractorProperties.getQueueBound());
-
+        setQueueBound();
         createDirectories();
     }
 
     @Scheduled(fixedRateString = "${scheduler.pollingFrequency}")
     private void run() {
-        log.info("Polling for tasks to run. Source directory: {}", source);
-
+        log.info("Polling for tasks to run. Source directory: {}", getSourceDir());
         if(state.equals(State.FREE)) {
             state = State.BUSY;
 
             process();
 
-            for(int i = 0; i < producers; i++) {
-                executorService.submit(new Producer(queue, waitList));
+            for(int i = 0; i < getProducerCount(); i++) {
+                executorService.submit(createProducer());
             }
-            for (int i = 0; i < consumers; i++) {
-                executorService.submit(new Consumer(queue, contentRepository,
-                        new XmlProcessor(jaxbContextLoader.getJaxbContext(), jaxbContextLoader.getSchema())));
+            for (int i = 0; i < getConsumerCount(); i++) {
+                executorService.submit(createConsumer());
             }
+
             state = State.FREE;
         }
-
     }
 
     private void process() {
@@ -94,7 +83,7 @@ public class TaskRunnerTwo {
 
     private List<String> scanDirectory() {
         List<String> filePathList = Collections.emptyList();
-        String fileDirectory = String.valueOf(source);
+        String fileDirectory = getSourceDir();
 
         try (Stream<Path> paths = Files.walk(Paths.get(fileDirectory))) {
             filePathList = paths
@@ -110,18 +99,79 @@ public class TaskRunnerTwo {
     }
 
     private void createDirectories() {
-        Path sourceDir = Paths.get(source);
-        Path processedDir = Paths.get(source + "/processed");
-        Path errorDir = Paths.get(source + "/error");
+        Path sourceDir = Paths.get(getSourceDir());
+        Path processedDir = Paths.get(getProcessedDir());
+        Path errorDir = Paths.get(getErrorDir());
+
+        try {
+            Files.createDirectory(sourceDir);
+        } catch (FileAlreadyExistsException e) {
+            log.info("FolderType with name: {} already exists.", e.getMessage());
+        } catch (IOException e) {
+            log.info(e.getMessage());
+        }
 
         try {
             Files.createDirectory(processedDir);
+        } catch (FileAlreadyExistsException e) {
+            log.info("FolderType with name: {} already exists.", e.getMessage());
+        } catch (IOException e) {
+            log.info(e.getMessage());
+        }
+
+        try {
             Files.createDirectory(errorDir);
         } catch (FileAlreadyExistsException e) {
-            log.info("Folder wuth name: {} already exists.", e.getMessage());
+            log.info("FolderType with name: {} already exists.", e.getMessage());
         } catch (IOException e) {
-            e.printStackTrace();
+            log.info(e.getMessage());
         }
+    }
+
+    private Producer createProducer() {
+        return new Producer(queue, waitList);
+    }
+
+    private Consumer createConsumer() {
+        return new Consumer(queue, contentRepository, getXmlProcessor(), getFolders());
+    }
+
+    private XmlProcessor getXmlProcessor() {
+        return new XmlProcessor(jaxbContextLoader.getJaxbContext(), jaxbContextLoader.getSchema());
+    }
+
+    private Map<FolderType, Folder> getFolders() {
+        Map<FolderType, Folder> folderMap = new HashMap<>();
+        folderMap.put(FolderType.SOURCE, new Folder(FolderType.SOURCE, getSourceDir()));
+        folderMap.put(FolderType.PROCESSED, new Folder(FolderType.PROCESSED, getProcessedDir()));
+        folderMap.put(FolderType.ERROR, new Folder(FolderType.ERROR, getErrorDir()));
+
+        return folderMap;
+    }
+
+    //Get&Set main parameters
+    private String getSourceDir() {
+        return extractorProperties.getDirectory().getSource();
+    }
+
+    private String getProcessedDir() {
+        return extractorProperties.getDirectory().getProcessed();
+    }
+
+    private String getErrorDir() {
+        return extractorProperties.getDirectory().getError();
+    }
+
+    private int getProducerCount() {
+        return extractorProperties.getProducers();
+    }
+
+    private int getConsumerCount() {
+        return Runtime.getRuntime().availableProcessors();
+    }
+
+    private void setQueueBound() {
+        queue = new LinkedBlockingDeque<>(extractorProperties.getQueueBound());
     }
 
 }

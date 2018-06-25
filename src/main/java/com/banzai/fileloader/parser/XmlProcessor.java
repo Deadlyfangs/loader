@@ -1,6 +1,7 @@
 package com.banzai.fileloader.parser;
 
 import com.banzai.fileloader.entity.external.ContentXml;
+import com.banzai.fileloader.exception.XmlFormatException;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
@@ -31,14 +32,19 @@ public class XmlProcessor {
         return content;
     }
 
-    public ContentXml unmarshal(File content) throws JAXBException {
-        Unmarshaller unmarshaller = context.createUnmarshaller();
-        unmarshaller.setSchema(schema);
-        unmarshaller.setEventHandler(new XmlValidationEventHandler());
+    public ContentXml unmarshal(File content) throws XmlFormatException {
+        try {
+            Unmarshaller unmarshaller = context.createUnmarshaller();
+            unmarshaller.setSchema(schema);
+            unmarshaller.setEventHandler(new XmlValidationEventHandler());
 
-        ContentXml contentXml = (ContentXml) unmarshaller.unmarshal(content);
+            ContentXml contentXml = (ContentXml) unmarshaller.unmarshal(content);
 
-        return contentXml;
+            return contentXml;
+
+        } catch (JAXBException e) {
+            throw new XmlFormatException("Invalid XML format.");
+        }
     }
 
     private String createFileName(ContentXml contentXml) {

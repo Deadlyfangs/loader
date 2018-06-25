@@ -14,7 +14,9 @@ scheduler:
   workerThreads: 4
   producers: 2
   queueBound: 10
-  pollingFrequency: 2000
+  pollingFrequency: 100
   directory:
     source: "/Users/d.diallo/BanzaiFolder/New"
+    processed: "/Users/d.diallo/BanzaiFolder/Old"
+    error: "/Users/d.diallo/BanzaiFolder/Error"
 

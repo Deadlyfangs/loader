@@ -22,12 +22,17 @@ public class Producer implements Runnable {
         fetchWaitList();
     }
 
+//    private void fetchWaitList() {
+//        while (!waitList.isEmpty()) {
+//            String filePath = waitList.poll();
+//            log.debug("FilePath: {}", filePath);
+//            putIntoQueue(getContent(filePath));
+//        }
+//    }
+
     private void fetchWaitList() {
-        while (!waitList.isEmpty()) {
-            String filePath = waitList.poll();
-            log.debug("FilePath: {}", filePath);
-            putIntoQueue(getContent(filePath));
-        }
+        String filePath = waitList.poll();
+        putIntoQueue(getContent(filePath));
     }
 
     private File getContent(String filePath) {

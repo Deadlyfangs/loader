@@ -31,7 +31,7 @@ public class ConsumerTest {
         try {
             Files.createDirectory(dest);
         } catch (FileAlreadyExistsException e) {
-            log.info("Folder wuth name: {} already exists.", e.getMessage());
+            log.info("FolderType wuth name: {} already exists.", e.getMessage());
         } catch (IOException e) {
             e.printStackTrace();
         }
