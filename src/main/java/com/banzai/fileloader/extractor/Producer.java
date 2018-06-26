@@ -18,7 +18,7 @@ public class Producer implements Runnable {
 
     @Override
     public void run() {
-        log.info("Producer started fetching waitlist...");
+        log.debug("Producer started fetching waitlist...");
 
         File file = getContent(fetchWaitList());
         putIntoQueue(file);
@@ -36,7 +36,7 @@ public class Producer implements Runnable {
         try {
             queue.put(content);
         } catch (InterruptedException e) {
-            log.warn(e.getMessage());
+            log.warn("Producer task is interrupted due to \"{}\"", e.getMessage());
         }
     }
 

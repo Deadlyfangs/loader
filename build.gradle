@@ -18,7 +18,7 @@ apply plugin: 'eclipse'
 apply plugin: 'org.springframework.boot'
 
 group = 'com.banzai'
-version = '0.0.1-SNAPSHOT'
+version = '1.0.RELEASE'
 sourceCompatibility = 1.8
 
 repositories {
@@ -32,8 +32,8 @@ dependencies {
     compile group: 'org.hibernate', name: 'hibernate-java8', version: '5.0.12.Final'
 	compile group: 'com.zaxxer', name: 'HikariCP', version: '3.2.0'
 	compile group: 'org.springframework', name: 'spring-oxm', version: '5.0.7.RELEASE'
-	compileOnly "org.springframework.boot:spring-boot-configuration-processor"
-	compileOnly('org.projectlombok:lombok')
+	compile group: 'org.projectlombok', name: 'lombok', version: '1.18.0'
+	compile "org.springframework.boot:spring-boot-configuration-processor"
 
 	testCompile('org.springframework.boot:spring-boot-starter-test')
 }

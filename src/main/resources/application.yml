@@ -10,16 +10,16 @@ spring:
   jpa:
     database-platform: org.hibernate.dialect.PostgreSQLDialect
     hibernate:
-      ddl-auto: validate
+      ddl-auto: update
     show-sql: true
 
 scheduler:
-  workerThreads: 8
-  producers: 6
-  queueBound: 8
-  pollingFrequency: 1000
+  workerThreads: 4
+  producers: 4
+  queueBound: 6
+  pollingFrequency: 500
   directory:
-    source: "/Users/d.diallo/BanzaiFolder/New"
-    processed: "/Users/d.diallo/BanzaiFolder/Old"
-    error: "/Users/d.diallo/BanzaiFolder/Error"
+    source: "${user.home}/BanzaiFolder/New"
+    processed: "${user.home}/BanzaiFolder/Old"
+    error: "${user.home}/BanzaiFolder/Error"
 

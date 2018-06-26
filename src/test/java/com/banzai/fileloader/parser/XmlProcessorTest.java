@@ -1,7 +1,6 @@
 package com.banzai.fileloader.parser;
 
 
-import com.banzai.fileloader.entity.external.ContentXml;
 import com.banzai.fileloader.exception.XmlFormatException;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.Test;
@@ -10,8 +9,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
-
-import java.io.File;
 
 @ActiveProfiles("test")
 @SpringBootTest

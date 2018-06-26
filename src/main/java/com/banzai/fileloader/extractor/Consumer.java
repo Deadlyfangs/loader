@@ -29,7 +29,7 @@ public class Consumer implements Runnable {
 
     @Override
     public void run() {
-        log.info("Consumer started fetching blocking queue...");
+        log.debug("Consumer started fetching blocking queue...");
 
         if(queue.isEmpty()) {
             return;
@@ -42,9 +42,10 @@ public class Consumer implements Runnable {
             save(newContentEntity);
 
             moveTo(file, FolderType.PROCESSED);
+            log.info("File \"{}\" is processed", file.getName());
         } catch (XmlFormatException e) {
             moveTo(file, FolderType.ERROR);
-            log.info(e.getMessage());
+            log.error("Could not process file \"{}\". {}", file.getName(), e.getMessage());
         }
     }
 
@@ -53,7 +54,7 @@ public class Consumer implements Runnable {
         try {
             content = queue.take();
         } catch (InterruptedException e) {
-            log.warn(e.getMessage());
+            log.warn("Consumer task is interrupted due to \"{}\"",e.getMessage());
         }
         return content;
     }
@@ -81,7 +82,7 @@ public class Consumer implements Runnable {
                 Files.move(sourceDir, errorDir.resolve(sourceDir.getFileName()), StandardCopyOption.REPLACE_EXISTING);
             }
         } catch (IOException e) {
-            e.printStackTrace();
+            log.error("Could not move processed file \"{}\". Exception: {}", content.getName(), e.getMessage());
         }
     }
 

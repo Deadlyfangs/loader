@@ -20,7 +20,10 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.*;
 import java.util.*;
-import java.util.concurrent.*;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.LinkedBlockingDeque;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.stream.Collectors;
@@ -37,8 +40,8 @@ public class TaskRunner {
     private final ContentRepository contentRepository;
     private final JaxbContextLoader jaxbContextLoader;
 
-    private Lock lock = new ReentrantLock();
     private BlockingQueue<File> queue;
+    private Lock lock = new ReentrantLock();
     private Queue<String> waitList = new ConcurrentLinkedQueue<>();
     private List<String> scannedList = new ArrayList<>(10000);
     private Map<FolderType, Folder> folderMap;
@@ -47,11 +50,12 @@ public class TaskRunner {
     private void init() {
         setQueueBound();
         createDirectories();
+        setFolders();
     }
 
     @Scheduled(fixedRateString = "${scheduler.pollingFrequency}")
     private void run() {
-        log.info("Polling for tasks to run. Source directory: {}", getSourceDir());
+        log.info("Scanning source directory: {}", getSourceDir());
 
         if (lock.tryLock()) {
             try {
@@ -91,7 +95,7 @@ public class TaskRunner {
                     .map(Path::toString)
                     .collect(Collectors.toList());
         } catch (NoSuchFileException ne) {
-            log.warn(ne.getMessage());
+            log.warn("File has already been processed. Exception: {}", ne.getMessage());
         } catch (IOException e) {
             log.error(e.getMessage());
         }
@@ -141,13 +145,6 @@ public class TaskRunner {
         return new XmlProcessor(jaxbContextLoader.getJaxbContext(), jaxbContextLoader.getSchema());
     }
 
-    private void setFolders() {
-        folderMap = new HashMap<>();
-        folderMap.put(FolderType.SOURCE, new Folder(FolderType.SOURCE, getSourceDir()));
-        folderMap.put(FolderType.PROCESSED, new Folder(FolderType.PROCESSED, getProcessedDir()));
-        folderMap.put(FolderType.ERROR, new Folder(FolderType.ERROR, getErrorDir()));
-    }
-
     //Get&Set main parameters
     private String getSourceDir() {
         return extractorProperties.getDirectory().getSource();
@@ -171,6 +168,13 @@ public class TaskRunner {
 
     private void setQueueBound() {
         queue = new LinkedBlockingDeque<>(extractorProperties.getQueueBound());
+    }
+
+    private void setFolders() {
+        folderMap = new HashMap<>();
+        folderMap.put(FolderType.SOURCE, new Folder(FolderType.SOURCE, getSourceDir()));
+        folderMap.put(FolderType.PROCESSED, new Folder(FolderType.PROCESSED, getProcessedDir()));
+        folderMap.put(FolderType.ERROR, new Folder(FolderType.ERROR, getErrorDir()));
     }
 
 }
