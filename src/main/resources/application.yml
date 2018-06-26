@@ -1,7 +1,7 @@
 spring:
   datasource:
     hikari:
-      connection-timeout: 10000
+      connection-timeout: 60000
       maximum-pool-size: 8
     url: "jdbc:postgresql://localhost:11088/banzaidb"
     username: "user"
@@ -11,13 +11,18 @@ spring:
     database-platform: org.hibernate.dialect.PostgreSQLDialect
     hibernate:
       ddl-auto: update
-    show-sql: true
+    show-sql: false
 
 scheduler:
+  #Amount of threads in a ThreadPool
   workerThreads: 4
+  #Amount of active producers at a time
   producers: 4
+  #BlockingQueue size between producers and consumers
   queueBound: 6
+  #Call rate between each folder scan in milliseconds
   pollingFrequency: 500
+  #Folders to scan, place processed and unprocessed/broken files
   directory:
     source: "${user.home}/BanzaiFolder/New"
     processed: "${user.home}/BanzaiFolder/Old"
