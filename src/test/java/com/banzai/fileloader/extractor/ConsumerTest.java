@@ -23,21 +23,21 @@ public class ConsumerTest {
 
     @Test
     public void test(){
-        File file = Paths.get("/Users/d.diallo/BanzaiFolder/New").toFile();
-
-        Path source = file.toPath();
-        Path dest = Paths.get(file.getPath() + "/processed");
-
-        try {
-            Files.createDirectory(dest);
-        } catch (FileAlreadyExistsException e) {
-            log.info("FolderType wuth name: {} already exists.", e.getMessage());
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-
-        log.info("Done");
+//        File file = Paths.get("/Users/d.diallo/BanzaiFolder/New").toFile();
+//
+//        Path source = file.toPath();
+//        Path dest = Paths.get(file.getPath() + "/processed");
+//
+//        try {
+//            Files.createDirectory(dest);
+//        } catch (FileAlreadyExistsException e) {
+//            log.info("FolderType with name: {} already exists.", e.getMessage());
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
+//
+//
+//        log.info("Done");
 
     }
 

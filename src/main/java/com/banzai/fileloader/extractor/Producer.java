@@ -36,7 +36,7 @@ public class Producer implements Runnable {
         try {
             queue.put(content);
         } catch (InterruptedException e) {
-            e.printStackTrace();
+            log.warn(e.getMessage());
         }
     }
 

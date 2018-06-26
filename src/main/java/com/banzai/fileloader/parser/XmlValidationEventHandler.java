@@ -10,9 +10,9 @@ public class XmlValidationEventHandler implements ValidationEventHandler {
 
     @Override
     public boolean handleEvent(ValidationEvent event) {
-        log.error("*** XML VALIDATION EVENT ***");
+//        log.error("*** XML VALIDATION EVENT ***");
 //        log.error("SEVERITY: {}", event.getSeverity());
-        log.error("MESSAGE: {}", event.getMessage());
+        log.error("XML validator: {}", event.getMessage());
 //        log.error("LINKED EXCEPTION: {}", event.getLinkedException());
 //        log.error("LOCATOR");
 //        log.error("    LINE NUMBER: {}", event.getLocator().getLineNumber());

@@ -37,11 +37,11 @@ public class TaskRunner {
     private final ContentRepository contentRepository;
     private final JaxbContextLoader jaxbContextLoader;
 
+    private Lock lock = new ReentrantLock();
     private BlockingQueue<File> queue;
     private Queue<String> waitList = new ConcurrentLinkedQueue<>();
     private List<String> scannedList = new ArrayList<>(10000);
-
-    private Lock lock = new ReentrantLock();
+    private Map<FolderType, Folder> folderMap;
 
     @PostConstruct
     private void init() {
@@ -58,7 +58,6 @@ public class TaskRunner {
                 process();
             } catch (Throwable t) {
                 log.error(t.getMessage());
-                t.printStackTrace();
             } finally {
                 lock.unlock();
             }
@@ -88,7 +87,7 @@ public class TaskRunner {
         try (Stream<Path> paths = Files.walk(Paths.get(getSourceDir()))) {
             filePathList = paths
                     .filter(Files::isRegularFile)
-                    .filter(f -> f.toString().endsWith(".xml"))
+                    .filter(path -> path.toString().endsWith(".xml"))
                     .map(Path::toString)
                     .collect(Collectors.toList());
         } catch (NoSuchFileException ne) {
@@ -135,20 +134,18 @@ public class TaskRunner {
     }
 
     private Consumer createConsumer() {
-        return new Consumer(queue, contentRepository, getXmlProcessor(), getFolders());
+        return new Consumer(queue, contentRepository, getXmlProcessor(), folderMap);
     }
 
     private XmlProcessor getXmlProcessor() {
         return new XmlProcessor(jaxbContextLoader.getJaxbContext(), jaxbContextLoader.getSchema());
     }
 
-    private Map<FolderType, Folder> getFolders() {
-        Map<FolderType, Folder> folderMap = new HashMap<>();
+    private void setFolders() {
+        folderMap = new HashMap<>();
         folderMap.put(FolderType.SOURCE, new Folder(FolderType.SOURCE, getSourceDir()));
         folderMap.put(FolderType.PROCESSED, new Folder(FolderType.PROCESSED, getProcessedDir()));
         folderMap.put(FolderType.ERROR, new Folder(FolderType.ERROR, getErrorDir()));
-
-        return folderMap;
     }
 
     //Get&Set main parameters

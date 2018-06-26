@@ -53,7 +53,7 @@ public class Consumer implements Runnable {
         try {
             content = queue.take();
         } catch (InterruptedException e) {
-            e.printStackTrace();
+            log.warn(e.getMessage());
         }
         return content;
     }

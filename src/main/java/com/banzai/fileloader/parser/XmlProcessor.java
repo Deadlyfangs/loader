@@ -23,15 +23,14 @@ public class XmlProcessor {
     private final JAXBContext context;
     private final Schema schema;
 
-    @Deprecated
-    public File marshal(ContentXml contentXml) throws JAXBException {
-        File content = new File(createFileName(contentXml));
-        Marshaller marshaller = context.createMarshaller();
-
-        marshaller.marshal(contentXml, content);
-
-        return content;
-    }
+//    public File marshal(ContentXml contentXml) throws JAXBException {
+//        File content = new File(createFileName(contentXml));
+//        Marshaller marshaller = context.createMarshaller();
+//
+//        marshaller.marshal(contentXml, content);
+//
+//        return content;
+//    }
 
     public ContentXml unmarshal(File content) throws XmlFormatException {
         try {
@@ -48,13 +47,12 @@ public class XmlProcessor {
         }
     }
 
-    @Deprecated
-    private String createFileName(ContentXml contentXml) {
-        StringBuilder sb = new StringBuilder();
-        sb.append(contentXml.getCreationDate());
-        sb.append("_processed");
-
-        return sb.toString();
-    }
+//    private String createFileName(ContentXml contentXml) {
+//        StringBuilder sb = new StringBuilder();
+//        sb.append(contentXml.getCreationDate());
+//        sb.append("_processed");
+//
+//        return sb.toString();
+//    }
 
 }

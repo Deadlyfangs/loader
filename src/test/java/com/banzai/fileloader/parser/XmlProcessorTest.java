@@ -2,6 +2,7 @@ package com.banzai.fileloader.parser;
 
 
 import com.banzai.fileloader.entity.external.ContentXml;
+import com.banzai.fileloader.exception.XmlFormatException;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -10,7 +11,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import javax.xml.bind.JAXBException;
 import java.io.File;
 
 @ActiveProfiles("test")
@@ -26,20 +26,12 @@ public class XmlProcessorTest {
     }
 
     @Test
-    public void testUnmarshal() {
+    public void testUnmarshal() throws XmlFormatException {
 
-        XmlProcessor xmlProcessor = new XmlProcessor(jaxbContextLoader.getJaxbContext(), jaxbContextLoader.getSchema());
+//        XmlProcessor xmlProcessor = new XmlProcessor(jaxbContextLoader.getJaxbContext(), jaxbContextLoader.getSchema());
+//        String testFilePath = this.getClass().getClassLoader().getResource("xml/test.xml").toString();
+//
+//        ContentXml content = xmlProcessor.unmarshal(new File(testFilePath));
 
-        try {
-            ContentXml content = xmlProcessor.unmarshal(new File("/Users/d.diallo/BanzaiFolder/New/test.xml"));
-
-            File file = xmlProcessor.marshal(content);
-
-            log.debug("Done");
-        } catch (JAXBException e) {
-            e.printStackTrace();
-        }
     }
-
-
 }

@@ -1,5 +1,8 @@
 spring:
   datasource:
+    hikari:
+      connection-timeout: 10000
+      maximum-pool-size: 8
     url: "jdbc:postgresql://localhost:11088/banzaidb"
     username: "user"
     password: "pass"
@@ -13,8 +16,8 @@ spring:
 scheduler:
   workerThreads: 8
   producers: 6
-  queueBound: 12
-  pollingFrequency: 500
+  queueBound: 8
+  pollingFrequency: 1000
   directory:
     source: "/Users/d.diallo/BanzaiFolder/New"
     processed: "/Users/d.diallo/BanzaiFolder/Old"
