@@ -3,9 +3,9 @@
 1) Развернуть базу PostgresSQL 9.0+ со схемой public.
 После этого, открыть конфигурационный файл в исходниках проекта fileloader/src/main/resources/application.yml.
 Прописать параметры подключения:
-        url: "jdbc:postgresql://address:port/dbname"
-        username: "username"
-        password: "password"
+        url: "jdbc:postgresql://ADDRESS:PORT/DBNAME"
+        username: "USERNAME"
+        password: "PASSWORD"
 
 2) Запустить SQL-скрипт fileloader/src/main/resources/sql/schema.sql для создания схемы в БД (таблица для контента).
 
