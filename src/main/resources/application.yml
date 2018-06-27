@@ -1,8 +1,8 @@
 spring:
   datasource:
-    hikari:
-      connection-timeout: 60000
-      maximum-pool-size: 8
+#    hikari:
+#      connection-timeout: 60000
+#      maximum-pool-size: 8
     url: "jdbc:postgresql://localhost:11088/banzaidb"
     username: "user"
     password: "pass"
@@ -17,11 +17,11 @@ scheduler:
   #Amount of threads in a ThreadPool
   workerThreads: 4
   #Amount of active producers at a time
-  producers: 4
+  producers: 2
   #BlockingQueue size between producers and consumers
-  queueBound: 6
+  queueBound: 10
   #Call rate between each folder scan in milliseconds
-  pollingFrequency: 500
+  pollingFrequency: 100
   #Folders to scan, place processed and unprocessed/broken files
   directory:
     source: "${user.home}/BanzaiFolder/New"
