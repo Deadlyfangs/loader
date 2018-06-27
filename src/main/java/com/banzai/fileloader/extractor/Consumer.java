@@ -4,11 +4,13 @@ package com.banzai.fileloader.extractor;
 import com.banzai.fileloader.entity.external.ContentXml;
 import com.banzai.fileloader.entity.internal.ContentEntity;
 import com.banzai.fileloader.exception.XmlFormatException;
-import com.banzai.fileloader.parser.XmlProcessor;
+import com.banzai.fileloader.parser.XmlValidationEventHandler;
 import com.banzai.fileloader.repository.ContentRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.oxm.jaxb.Jaxb2Marshaller;
 
+import javax.xml.transform.stream.StreamSource;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -24,8 +26,8 @@ public class Consumer implements Runnable {
 
     private final BlockingQueue<File> queue;
     private final ContentRepository contentRepository;
-    private final XmlProcessor xmlProcessor;
     private final Map<FolderType, Folder> folderMap;
+    private final Jaxb2Marshaller marshaller;
 
     @Override
     public void run() {
@@ -60,7 +62,8 @@ public class Consumer implements Runnable {
     }
 
     private ContentEntity parse(File content) throws XmlFormatException {
-        ContentXml contentXml = xmlProcessor.unmarshal(content);
+        marshaller.setValidationEventHandler(new XmlValidationEventHandler());
+        ContentXml contentXml = (ContentXml) marshaller.unmarshal(new StreamSource(content));
 
         ContentEntity contentEntity = new ContentEntity();
         contentEntity.setContent(contentXml.getContent());

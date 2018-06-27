@@ -1,8 +1,8 @@
 spring:
   datasource:
-#    hikari:
-#      connection-timeout: 60000
-#      maximum-pool-size: 8
+    hikari:
+      connection-timeout: 60000
+      maximum-pool-size: 8
     url: "jdbc:postgresql://localhost:11088/banzaidb"
     username: "user"
     password: "pass"

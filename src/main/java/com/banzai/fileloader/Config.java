@@ -22,16 +22,17 @@ public class Config {
         return Executors.newFixedThreadPool(properties.workerThreads);
     }
 
-//    @Bean
-//    public Jaxb2Marshaller jaxb2Marshaller() {
-//        Jaxb2Marshaller marshaller = new Jaxb2Marshaller();
-//        marshaller.setClassesToBeBound(com.banzai.fileloader.entity.external.ContentXml.class);
-//
-//        marshaller.setMarshallerProperties(new HashMap<String, Object>() {{
-//            put(javax.xml.bind.Marshaller.JAXB_FORMATTED_OUTPUT, true);
-//        }});
-//
-//        return marshaller;
-//    }
+    @Bean
+    public Jaxb2Marshaller jaxb2Marshaller() {
+        Jaxb2Marshaller marshaller = new Jaxb2Marshaller();
+        marshaller.setClassesToBeBound(com.banzai.fileloader.entity.external.ContentXml.class);
+        marshaller.setMarshallerProperties(new HashMap<String, Object>() {{
+            put(javax.xml.bind.Marshaller.JAXB_FORMATTED_OUTPUT, true);
+            put(Marshaller.JAXB_SCHEMA_LOCATION, "xml/content_schema.xsd");
+            }
+        });
+
+        return marshaller;
+    }
 
 }

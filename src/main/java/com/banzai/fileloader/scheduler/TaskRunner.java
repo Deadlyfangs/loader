@@ -6,12 +6,11 @@ import com.banzai.fileloader.extractor.Consumer;
 import com.banzai.fileloader.extractor.Folder;
 import com.banzai.fileloader.extractor.FolderType;
 import com.banzai.fileloader.extractor.Producer;
-import com.banzai.fileloader.parser.JaxbContextLoader;
-import com.banzai.fileloader.parser.XmlProcessor;
 import com.banzai.fileloader.repository.ContentRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Profile;
+import org.springframework.oxm.jaxb.Jaxb2Marshaller;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
@@ -38,7 +37,7 @@ public class TaskRunner {
     private final SchedulerProperties extractorProperties;
     private final ExecutorService executorService;
     private final ContentRepository contentRepository;
-    private final JaxbContextLoader jaxbContextLoader;
+    private final Jaxb2Marshaller marshaller;
 
     private BlockingQueue<File> queue;
     private Lock lock = new ReentrantLock();
@@ -138,11 +137,7 @@ public class TaskRunner {
     }
 
     private Consumer createConsumer() {
-        return new Consumer(queue, contentRepository, getXmlProcessor(), folderMap);
-    }
-
-    private XmlProcessor getXmlProcessor() {
-        return new XmlProcessor(jaxbContextLoader.getJaxbContext(), jaxbContextLoader.getSchema());
+        return new Consumer(queue, contentRepository, folderMap, marshaller);
     }
 
     //Get&Set main parameters
