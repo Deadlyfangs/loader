@@ -7,6 +7,7 @@ import com.banzai.fileloader.extractor.Folder;
 import com.banzai.fileloader.extractor.FolderType;
 import com.banzai.fileloader.extractor.Producer;
 import com.banzai.fileloader.repository.ContentRepository;
+import com.sun.istack.internal.NotNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Profile;
@@ -25,6 +26,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.LinkedBlockingDeque;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
+import java.util.function.BiFunction;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -36,8 +38,8 @@ public class TaskRunner {
 
     private final SchedulerProperties extractorProperties;
     private final ExecutorService executorService;
-    private final ContentRepository contentRepository;
-    private final Jaxb2Marshaller marshaller;
+    private final BiFunction<BlockingQueue<File>, Map<FolderType, Folder>, Consumer> consumerFactory;
+    private final BiFunction<BlockingQueue<File>, Queue<String>, Producer> producerFactory;
 
     private BlockingQueue<File> queue;
     private Lock lock = new ReentrantLock();
@@ -77,10 +79,10 @@ public class TaskRunner {
                 });
 
         for(int i = 0; i < getProducerCount(); i++) {
-            executorService.submit(createProducer());
+            executorService.submit(producerFactory.apply(queue, waitList));
         }
         for (int i = 0; i < getConsumerCount(); i++) {
-            executorService.submit(createConsumer());
+            executorService.submit(consumerFactory.apply(queue, folderMap));
         }
     }
 
@@ -89,7 +91,7 @@ public class TaskRunner {
 
         try (Stream<Path> paths = Files.walk(Paths.get(getSourceDir()))) {
             filePathList = paths
-                    .filter(Files::isRegularFile)
+                    .filter(path -> Files.isRegularFile(path, LinkOption.NOFOLLOW_LINKS))
                     .filter(path -> path.toString().endsWith(".xml"))
                     .map(Path::toString)
                     .collect(Collectors.toList());
@@ -132,13 +134,13 @@ public class TaskRunner {
         }
     }
 
-    private Producer createProducer() {
-        return new Producer(queue, waitList);
-    }
-
-    private Consumer createConsumer() {
-        return new Consumer(queue, contentRepository, folderMap, marshaller);
-    }
+//    private Producer createProducer() {
+//        return new Producer(queue, waitList);
+//    }
+//
+//    private Consumer createConsumer() {
+//        return new Consumer(queue, folderMap);
+//    }
 
     //Get&Set main parameters
     private String getSourceDir() {

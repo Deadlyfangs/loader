@@ -1,16 +1,23 @@
 package com.banzai.fileloader;
 
 
+import com.banzai.fileloader.extractor.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Scope;
 import org.springframework.oxm.jaxb.Jaxb2Marshaller;
 
 import javax.xml.bind.Marshaller;
+import java.io.File;
 import java.util.HashMap;
+import java.util.Map;
+import java.util.Queue;
+import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.function.BiFunction;
 
 @Configuration
 @EnableConfigurationProperties(SchedulerProperties.class)
@@ -33,6 +40,28 @@ public class Config {
         });
 
         return marshaller;
+    }
+
+    @Bean
+    public BiFunction<BlockingQueue<File>, Map<FolderType, Folder>, Consumer> consumerFactory() {
+        return (queue, folderMap) -> consumer(queue, folderMap);
+    }
+
+    @Bean
+    @Scope(value = "prototype")
+    public Consumer consumer(BlockingQueue queue, Map folderMap) {
+        return new Consumer(queue, folderMap);
+    }
+
+    @Bean
+    public BiFunction<BlockingQueue<File>, Queue<String>, Producer> producerFactory() {
+        return (queue, waitList) -> producer(queue, waitList);
+    }
+
+    @Bean
+    @Scope(value = "prototype")
+    public Producer producer(BlockingQueue queue, Queue waitList) {
+        return new Producer(queue, waitList);
     }
 
 }

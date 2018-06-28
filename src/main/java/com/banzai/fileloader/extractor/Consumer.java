@@ -3,12 +3,15 @@ package com.banzai.fileloader.extractor;
 
 import com.banzai.fileloader.entity.external.ContentXml;
 import com.banzai.fileloader.entity.internal.ContentEntity;
-import com.banzai.fileloader.exception.XmlFormatException;
 import com.banzai.fileloader.parser.XmlValidationEventHandler;
 import com.banzai.fileloader.repository.ContentRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Scope;
+import org.springframework.oxm.XmlMappingException;
 import org.springframework.oxm.jaxb.Jaxb2Marshaller;
+import org.springframework.stereotype.Component;
 
 import javax.xml.transform.stream.StreamSource;
 import java.io.File;
@@ -20,14 +23,20 @@ import java.nio.file.StandardCopyOption;
 import java.util.Map;
 import java.util.concurrent.BlockingQueue;
 
+@Component
+@Scope("prototype")
 @Slf4j
 @RequiredArgsConstructor
 public class Consumer implements Runnable {
 
+    @Autowired
+    private ContentRepository contentRepository;
+    @Autowired
+    private Jaxb2Marshaller marshaller;
+
     private final BlockingQueue<File> queue;
-    private final ContentRepository contentRepository;
     private final Map<FolderType, Folder> folderMap;
-    private final Jaxb2Marshaller marshaller;
+
 
     @Override
     public void run() {
@@ -38,16 +47,12 @@ public class Consumer implements Runnable {
         }
 
         File file = fetchQueue();
-
         try {
             ContentEntity newContentEntity = parse(file);
             save(newContentEntity);
-
             moveTo(file, FolderType.PROCESSED);
-            log.info("File \"{}\" is processed", file.getName());
-        } catch (XmlFormatException e) {
+        } catch (XmlMappingException e) {
             moveTo(file, FolderType.ERROR);
-            log.error("Could not process file \"{}\". {}", file.getName(), e.getMessage());
         }
     }
 
@@ -61,7 +66,7 @@ public class Consumer implements Runnable {
         return content;
     }
 
-    private ContentEntity parse(File content) throws XmlFormatException {
+    private ContentEntity parse(File content) throws XmlMappingException {
         marshaller.setValidationEventHandler(new XmlValidationEventHandler());
         ContentXml contentXml = (ContentXml) marshaller.unmarshal(new StreamSource(content));
 
@@ -80,9 +85,11 @@ public class Consumer implements Runnable {
         try {
             if (folderType.equals(FolderType.PROCESSED)) {
                 Files.move(sourceDir, processedDir.resolve(sourceDir.getFileName()), StandardCopyOption.REPLACE_EXISTING);
+                log.info("File \"{}\" is processed", content.getName());
             }
             if (folderType.equals(FolderType.ERROR)) {
                 Files.move(sourceDir, errorDir.resolve(sourceDir.getFileName()), StandardCopyOption.REPLACE_EXISTING);
+                log.error("Could not process file \"{}\". {}", content.getName());
             }
         } catch (IOException e) {
             log.error("Could not move processed file \"{}\". Exception: {}", content.getName(), e.getMessage());
