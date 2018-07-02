@@ -134,14 +134,6 @@ public class TaskRunner {
         }
     }
 
-//    private Producer createProducer() {
-//        return new Producer(queue, waitList);
-//    }
-//
-//    private Consumer createConsumer() {
-//        return new Consumer(queue, folderMap);
-//    }
-
     //Get&Set main parameters
     private String getSourceDir() {
         return extractorProperties.getDirectory().getSource();

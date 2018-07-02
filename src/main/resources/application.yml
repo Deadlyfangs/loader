@@ -15,9 +15,9 @@ spring:
 
 scheduler:
   #Amount of threads in a ThreadPool
-  workerThreads: 4
+  workerThreads: 8
   #Amount of active producers at a time
-  producers: 2
+  producers: 4
   #BlockingQueue size between producers and consumers
   queueBound: 10
   #Call rate between each folder scan in milliseconds

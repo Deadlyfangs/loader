@@ -18,6 +18,7 @@ import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.function.BiFunction;
+import java.util.logging.Level;
 
 @Configuration
 @EnableConfigurationProperties(SchedulerProperties.class)
@@ -38,6 +39,8 @@ public class Config {
             put(Marshaller.JAXB_SCHEMA_LOCATION, "xml/content_schema.xsd");
             }
         });
+
+        java.util.logging.Logger.getLogger("com.sun.xml.internal.bind").setLevel(Level.FINEST);
 
         return marshaller;
     }

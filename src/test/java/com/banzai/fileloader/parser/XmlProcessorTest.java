@@ -16,9 +16,6 @@ import org.springframework.test.context.junit4.SpringRunner;
 @Slf4j
 public class XmlProcessorTest {
 
-    @Autowired
-    JaxbContextLoader jaxbContextLoader;
-
     public XmlProcessorTest() {
     }
 
