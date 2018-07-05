@@ -20,10 +20,7 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.*;
 import java.util.*;
-import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.ConcurrentLinkedQueue;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.LinkedBlockingDeque;
+import java.util.concurrent.*;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.function.BiFunction;
@@ -44,7 +41,7 @@ public class TaskRunner {
     private BlockingQueue<File> queue;
     private Lock lock = new ReentrantLock();
     private Queue<String> waitList = new ConcurrentLinkedQueue<>();
-    private List<String> scannedList = new ArrayList<>(10000);
+    private Map<String, String> scannedList = new ConcurrentHashMap<>();
     private Map<FolderType, Folder> folderMap;
 
     @PostConstruct
@@ -72,8 +69,8 @@ public class TaskRunner {
     private void process() {
         scanDirectory().stream()
                 .forEach(s -> {
-                    if (!scannedList.contains(s)) {
-                        scannedList.add(s);
+                    if(!scannedList.containsKey(s)) {
+                        scannedList.put(s, null);
                         waitList.offer(s);
                     }
                 });

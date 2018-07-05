@@ -18,6 +18,7 @@ import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.function.BiFunction;
+import java.util.function.Function;
 import java.util.logging.Level;
 
 @Configuration
@@ -66,5 +67,7 @@ public class Config {
     public Producer producer(BlockingQueue queue, Queue waitList) {
         return new Producer(queue, waitList);
     }
+
+    //TODO Add Beans for new Producer/Consumer params approach.
 
 }

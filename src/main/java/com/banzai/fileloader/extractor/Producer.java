@@ -1,6 +1,7 @@
 package com.banzai.fileloader.extractor;
 
 
+import com.banzai.fileloader.extractor.parameters.ProducerParams;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Scope;
@@ -19,6 +20,8 @@ public class Producer implements Runnable {
 
     private final BlockingQueue<File> queue;
     private final Queue<String> waitList;
+
+//    private final ProducerParams params;
 
     @Override
     public void run() {

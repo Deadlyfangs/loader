@@ -3,6 +3,7 @@ package com.banzai.fileloader.extractor;
 
 import com.banzai.fileloader.entity.external.ContentXml;
 import com.banzai.fileloader.entity.internal.ContentEntity;
+import com.banzai.fileloader.extractor.parameters.ConsumerParams;
 import com.banzai.fileloader.parser.XmlValidationEventHandler;
 import com.banzai.fileloader.repository.ContentRepository;
 import lombok.RequiredArgsConstructor;
@@ -37,6 +38,8 @@ public class Consumer implements Runnable {
 
     private final BlockingQueue<File> queue;
     private final Map<FolderType, Folder> folderMap;
+
+//    private final ConsumerParams params;
 
 
     @Override

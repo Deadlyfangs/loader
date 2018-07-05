@@ -21,7 +21,7 @@ scheduler:
   #BlockingQueue size between producers and consumers
   queueBound: 10
   #Call rate between each folder scan in milliseconds
-  pollingFrequency: 100
+  pollingFrequency: 1000
   #Folders to scan, place processed and unprocessed/broken files
   directory:
     source: "${user.home}/BanzaiFolder/New"
