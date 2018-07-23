@@ -20,7 +20,8 @@
     или
     java -jar fileloader-1.0.RELEASE.jar
 
-В случае без указания папок, приложение по умолчанию выберет системную папку пользователя и создаст в ней папки BanzaiFolder/New, BanzaiFolder/Old, BanzaiFolder/Error.
+В случае без указания папок, приложение по умолчанию выберет системную папку пользователя и создаст в ней папки BanzaiFolder/New, 
+BanzaiFolder/Old, BanzaiFolder/Error.
 Все необходимые параметры и комментарии к ним находятся в файле fileloader/src/main/resources/application.yml.
 
 
