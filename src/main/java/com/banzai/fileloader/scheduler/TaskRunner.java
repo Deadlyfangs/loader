@@ -6,12 +6,9 @@ import com.banzai.fileloader.extractor.Consumer;
 import com.banzai.fileloader.extractor.Folder;
 import com.banzai.fileloader.extractor.FolderType;
 import com.banzai.fileloader.extractor.Producer;
-import com.banzai.fileloader.repository.ContentRepository;
-import com.sun.istack.internal.NotNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Profile;
-import org.springframework.oxm.jaxb.Jaxb2Marshaller;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 

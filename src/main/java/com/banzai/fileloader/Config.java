@@ -1,7 +1,10 @@
 package com.banzai.fileloader;
 
 
-import com.banzai.fileloader.extractor.*;
+import com.banzai.fileloader.extractor.Consumer;
+import com.banzai.fileloader.extractor.Folder;
+import com.banzai.fileloader.extractor.FolderType;
+import com.banzai.fileloader.extractor.Producer;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
@@ -18,7 +21,6 @@ import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.function.BiFunction;
-import java.util.function.Function;
 import java.util.logging.Level;
 
 @Configuration
@@ -66,8 +68,5 @@ public class Config {
     @Scope(value = "prototype")
     public Producer producer(BlockingQueue queue, Queue waitList) {
         return new Producer(queue, waitList);
-    }
-
-    //TODO Add Beans for new Producer/Consumer params approach.
-
+    
 }
