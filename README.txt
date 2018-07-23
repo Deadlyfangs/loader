@@ -14,7 +14,9 @@
 
 
 3) Запустить приложение, например:
-    java -jar fileloader-1.0.RELEASE.jar --scheduler.directory.source=/Users/SOME_USER_NAME/BanzaiFolder/New --scheduler.directory.processed=/Users/SOME_USER_NAME/BanzaiFolder/Old --scheduler.directory.error=/Users/SOME_USER_NAME/BanzaiFolder/Error
+    java -jar fileloader-1.0.RELEASE.jar --scheduler.directory.source=/Users/SOME_USER_NAME/BanzaiFolder/New
+    --scheduler.directory.processed=/Users/SOME_USER_NAME/BanzaiFolder/Old 
+    --scheduler.directory.error=/Users/SOME_USER_NAME/BanzaiFolder/Error
     или
     java -jar fileloader-1.0.RELEASE.jar
 
