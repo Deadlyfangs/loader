@@ -3,7 +3,7 @@ spring:
     hikari:
       connection-timeout: 60000
       maximum-pool-size: 8
-    url: "jdbc:postgresql://localhost:11088/banzaidb"
+    url: "jdbc:postgresql://localhost:11088/exampledb"
     username: "user"
     password: "pass"
     driverClassName: "org.postgresql.Driver"
@@ -24,7 +24,7 @@ scheduler:
   pollingFrequency: 1000
   #Folders to scan, place processed and unprocessed/broken files
   directory:
-    source: "${user.home}/BanzaiFolder/New"
-    processed: "${user.home}/BanzaiFolder/Old"
-    error: "${user.home}/BanzaiFolder/Error"
+    source: "${user.home}/Documents/ExampleFolder/New"
+    processed: "${user.home}/Documents/ExampleFolder/Old"
+    error: "${user.home}/Documents/ExampleFolder/Error"
 

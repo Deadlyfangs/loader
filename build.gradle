@@ -11,13 +11,13 @@ buildscript {
 }
 
 apply plugin: 'application'
-mainClassName = 'com.banzai.fileloader.Application'
+mainClassName = 'com.example.file.processor.Application'
 
 apply plugin: 'java'
 apply plugin: 'idea'
 apply plugin: 'org.springframework.boot'
 
-group = 'com.banzai'
+group = 'com.example'
 version = '1.0.RELEASE'
 sourceCompatibility = 1.8
 
